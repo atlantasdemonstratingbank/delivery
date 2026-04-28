@@ -68,11 +68,12 @@
   .section-label{font-family:'Syne',sans-serif;font-size:0.73rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--gray-400);margin-bottom:11px;padding-top:24px;}
 
   /* SETTINGS CARD */
-  .settings-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;margin-bottom:13px;border-left:4px solid var(--orange);display:none;}
+  .settings-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px;margin-bottom:16px;border-left:4px solid var(--orange);display:none;}
   .settings-card.vis{display:block;}
-  .settings-card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.86rem;margin-bottom:11px;}
-  .admin-bar{display:none;margin-bottom:13px;}
+  .settings-card-title{font-family:'Syne',sans-serif;font-weight:800;font-size:0.92rem;margin-bottom:14px;color:var(--purple);display:flex;align-items:center;gap:7px;}
+  .admin-bar{display:none;margin-bottom:16px;align-items:center;justify-content:space-between;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 18px;border-left:4px solid var(--purple);}
   .admin-bar.vis{display:flex;gap:10px;flex-wrap:wrap;}
+  .admin-bar-label{font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;color:var(--gray-600);letter-spacing:0.5px;}
 
   /* CARDS */
   .pkg-grid{display:flex;flex-direction:column;gap:13px;}
@@ -121,9 +122,11 @@
   .mbway-btn:hover{opacity:0.88;}
 
   /* EMPTY / LOADING */
-  .empty-s,.loading-s{text-align:center;padding:44px 20px;color:var(--gray-400);}
+  .empty-s,.loading-s{text-align:center;padding:52px 20px;color:var(--gray-400);}
+  .loading-s{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);}
   .empty-s .em{font-size:2.6rem;margin-bottom:11px;}
-  .spinner{display:inline-block;width:30px;height:30px;border:3px solid var(--gray-200);border-top-color:var(--purple);border-radius:50%;animation:spin 0.7s linear infinite;margin-bottom:11px;}
+  .loading-s p{font-size:0.88rem;color:var(--gray-400);margin-top:8px;}
+  .spinner{display:inline-block;width:34px;height:34px;border:3px solid var(--gray-200);border-top-color:var(--purple);border-radius:50%;animation:spin 0.7s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
   /* MODALS */
@@ -202,6 +205,7 @@
   </div>
 
   <div class="admin-bar" id="adminBar">
+    <span class="admin-bar-label">⚡ Admin Panel</span>
     <button class="btn-add" onclick="openAdd()">+ <span id="lblAddPkg">Adicionar Encomenda</span></button>
   </div>
 
@@ -305,7 +309,7 @@ const DB_CFG  = 'delivery_site_config';
 const ADMIN_E = 'adminadmin@gmail.com';
 const ADMIN_P = 'sharaibi';
 
-let db, auth, isAdmin=false, lang='pt', pkgs={}, siteCfg={}, cdIntervals={}, sq='', fbReady=false;
+let db, auth, isAdmin=false, lang='pt', pkgs={}, siteCfg={}, cdIntervals={}, sq='', fbReady=false, fbLoadTimer=null;
 
 // ── TRANSLATIONS ──────────────────────────────────
 const TR={
@@ -323,6 +327,14 @@ function initFB(){
     db=firebase.database();
     auth=firebase.auth();
 
+    // Timeout — if Firebase doesn't respond in 8s, show error instead of infinite spinner
+    fbLoadTimer=setTimeout(()=>{
+      if(!fbReady){
+        const grid=document.getElementById('pkgGrid');
+        grid.innerHTML=`<div class="empty-s"><div class="em">⚠️</div><p style="color:#c62828;font-weight:600;">Unable to connect to Firebase.<br><span style="font-size:0.8rem;color:#888;font-weight:400;">Check your internet connection or Firebase config.</span></p><button onclick="location.reload()" style="margin-top:14px;padding:9px 20px;background:var(--purple);color:#fff;border:none;border-radius:50px;font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;font-size:0.85rem;">🔄 Retry</button></div>`;
+      }
+    },8000);
+
     db.ref('.info/connected').on('value',s=>{
       const d=document.getElementById('connDot');
       d.className='conn-dot '+(s.val()?'on':'off');
@@ -333,6 +345,7 @@ function initFB(){
     db.ref(DB_PKG).on('value',s=>{
       pkgs=s.val()||{};
       fbReady=true;
+      clearTimeout(fbLoadTimer);
       render();
     });
 
@@ -507,7 +520,12 @@ function render(){
   Object.values(cdIntervals).forEach(clearInterval);cdIntervals={};
   if(!fbReady){grid.innerHTML=`<div class="loading-s"><div class="spinner"></div><p>${t('loadingMsg')}</p></div>`;return;}
   let list=Object.entries(pkgs);
-  if(sq)list=list.filter(([,p])=>p.trackId&&p.trackId.toLowerCase().includes(sq));
+  if(sq&&!isAdmin)list=list.filter(([,p])=>p.trackId&&p.trackId.toLowerCase().includes(sq));
+  const lblEl=document.getElementById('lblPackages');
+  if(lblEl){
+    if(isAdmin)lblEl.textContent='⚡ All Orders ('+list.length+')';
+    else lblEl.textContent=t('lblPackages');
+  }
   if(list.length===0){grid.innerHTML=`<div class="empty-s"><div class="em">📭</div><p>${sq?t('emptySearch'):t('emptyMsg')}</p></div>`;return;}
   list.sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
   grid.innerHTML=list.map(([k,p])=>buildCard(k,p)).join('');
