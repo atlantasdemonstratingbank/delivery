@@ -360,13 +360,13 @@
 <script>
 // ── FIREBASE ──────────────────────────────────────
 const FB_CFG = {
-  apiKey:'AIzaSyDLPAktzLmpfNX9XUmw9i_B2P2I3XPwOLs',
-  authDomain:'viccybank.firebaseapp.com',
-  databaseURL:'https://viccybank-default-rtdb.firebaseio.com',
-  projectId:'viccybank',
-  storageBucket:'viccybank.firebasestorage.app',
-  messagingSenderId:'328465601734',
-  appId:'1:328465601734:web:ae8d6bee3683be60629b32'
+  apiKey:'AIzaSyBImY_p3w3usluBw9hh_FgQxrZ7BJdCUMY',
+  authDomain:'fedexlike.firebaseapp.com',
+  databaseURL:'https://fedexlike-default-rtdb.firebaseio.com',
+  projectId:'fedexlike',
+  storageBucket:'fedexlike.firebasestorage.app',
+  messagingSenderId:'55174944453',
+  appId:'1:55174944453:web:ba05f8dcd55c75117a82ac'
 };
 const DB_PKG  = 'delivery_packages';
 const DB_CFG  = 'delivery_site_config';
@@ -395,9 +395,9 @@ function initFB(){
     fbLoadTimer=setTimeout(()=>{
       if(!fbReady){
         const grid=document.getElementById('pkgGrid');
-        grid.innerHTML=`<div class="empty-s"><div class="em">⚠️</div><p style="color:#c62828;font-weight:600;">Sem ligação ao Firebase.<br><span style="font-size:0.8rem;color:#888;font-weight:400;">Verifique a sua ligação à internet.</span></p><button onclick="retrySearch()" style="margin-top:14px;padding:9px 20px;background:var(--purple);color:#fff;border:none;border-radius:50px;font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;font-size:0.85rem;">🔄 Tentar Novamente</button></div>`;
+        grid.innerHTML=`<div class="empty-s"><div class="em">⚠️</div><p style="color:#c62828;font-weight:600;">Não foi possível carregar os dados.<br><span style="font-size:0.8rem;color:#888;font-weight:400;">Verifique a sua ligação à internet e tente novamente.</span></p><button onclick="retrySearch()" style="margin-top:14px;padding:9px 20px;background:var(--purple);color:#fff;border:none;border-radius:50px;font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;font-size:0.85rem;">🔄 Tentar Novamente</button></div>`;
       }
-    },8000);
+    },12000);
 
     db.ref('.info/connected').on('value',s=>{
       const d=document.getElementById('connDot');
@@ -508,12 +508,14 @@ function applyCfg(){
     const h=Math.ceil(siteName.length/2);
     document.getElementById('siteName').innerHTML=siteName.slice(0,h)+'<span>'+siteName.slice(h)+'</span>';
     document.title=siteName;
-    if(isAdmin)document.getElementById('siteNameIn').value=siteName;
   }
   const w=document.getElementById('logoWrap');
   if(logoUrl){w.innerHTML=`<img src="${logoUrl}" onerror="this.parentElement.innerHTML='📦'">`;}
   else{w.innerHTML='📦';}
-  if(isAdmin)document.getElementById('logoUrlIn').value=siteCfg.logoUrl||'';
+  if(isAdmin){
+    document.getElementById('siteNameIn').value=siteCfg.siteName||'';
+    document.getElementById('logoUrlIn').value=siteCfg.logoUrl||'';
+  }
 }
 
 // ── CRUD ──────────────────────────────────────────
